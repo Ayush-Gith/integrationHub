@@ -1,0 +1,638 @@
+{
+	"info": {
+		"_postman_id": "0cadc82a-d354-4264-b260-9b92695982c5",
+		"name": "Integrations Hub",
+		"description": "Postman collection for testing Laravel JWT Authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "48237510",
+		"_collection_link": "https://choudhary-ayush6897-682451.postman.co/workspace/Ayush-Choudhary's-Workspace~fe183b8b-4769-449e-8178-70490ca5db1f/collection/48237510-0cadc82a-d354-4264-b260-9b92695982c5?action=share&source=collection_link&creator=48237510"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Tanmay Shakya\",\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"password\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Me",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/api/me",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Integrations",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const baseUrl = pm.environment.get(\"base_url\");",
+							"const email = pm.environment.get(\"email\");",
+							"const password = pm.environment.get(\"password\");",
+							"console.log(baseUrl, email, password);",
+							"pm.sendRequest({",
+							"    url: `${baseUrl}/api/login`,",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Content-Type': 'application/json',",
+							"        'Accept': 'application/json'",
+							"    },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({",
+							"            email: email,",
+							"            password: password",
+							"        })",
+							"    }",
+							"}, function (err, res) {",
+							"    if (err) {",
+							"        console.log(\"Login request failed\", err);",
+							"        return;",
+							"    }",
+							"",
+							"    if (res.code !== 200) {",
+							"        console.log(\"Unexpected status code\", res.code);",
+							"        return;",
+							"    }",
+							"",
+							"    try {",
+							"        const json = res.json();",
+							"        const jwt_token = json.token; // Adjust based on your actual response",
+							"        if (jwt_token) {",
+							"            pm.environment.set(\"jwt_token\", jwt_token);",
+							"            console.log(\"Token set successfully.\");",
+							"        } else {",
+							"            console.log(\"Token not found in response.\");",
+							"        }",
+							"    } catch (e) {",
+							"        console.log(\"Error parsing response:\", e);",
+							"    }",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"platform\": \"wix\",\n  \"api_key\": \"wix_api_123\",\n  \"api_secret\": \"shp_secret_12345\",\n  \"access_token\": \"shp_access_12345\",\n  \"settings\": {\n    \"shop_url\": \"my-store.wix.com\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/integrations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"integrations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add platform webhook",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const baseUrl = pm.environment.get(\"base_url\");",
+							"const email = pm.environment.get(\"email\");",
+							"const password = pm.environment.get(\"password\");",
+							"pm.sendRequest({",
+							"    url: `${baseUrl}/api/login`,",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Content-Type': 'application/json',",
+							"        'Accept': 'application/json'",
+							"    },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({",
+							"            email: email,",
+							"            password: password",
+							"        })",
+							"    }",
+							"}, function (err, res) {",
+							"    if (err) {",
+							"        console.log(\"Login request failed\", err);",
+							"        return;",
+							"    }",
+							"",
+							"    if (res.code !== 200) {",
+							"        console.log(\"Unexpected status code\", res.code);",
+							"        return;",
+							"    }",
+							"",
+							"    try {",
+							"        const json = res.json();",
+							"        const jwt_token = json.token; // Adjust based on your actual response",
+							"        if (jwt_token) {",
+							"            pm.environment.set(\"jwt_token\", jwt_token);",
+							"            console.log(\"Token set successfully.\");",
+							"        } else {",
+							"            console.log(\"Token not found in response.\");",
+							"        }",
+							"    } catch (e) {",
+							"        console.log(\"Error parsing response:\", e);",
+							"    }",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"event\": \"order_created\",\n  \"order\": {\n    \"id\": 987654,\n    \"total_price\": \"200.00\",\n    \"customer\": {\n      \"id\": 123456,\n      \"email\": \"jnotAdmin@example.com\",\n      \"name\": \"Local user\"\n    },\n    \"line_items\": [\n      {\n        \"sku\": \"SKU-1234\",\n        \"name\": \"Sample Product\",\n        \"quantity\": 2,\n        \"price\": \"125.00\"\n      }\n    ]\n  }\n}\n"
+				},
+				"url": {
+					"raw": "{{base_url}}/api/webhooks/shopify",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"webhooks",
+						"shopify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Webhook",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const baseUrl = pm.environment.get(\"base_url\");",
+							"const email = pm.environment.get(\"email\");",
+							"const password = pm.environment.get(\"password\");",
+							"console.log(baseUrl, email, password);",
+							"pm.sendRequest({",
+							"    url: `${baseUrl}/api/login`,",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Content-Type': 'application/json',",
+							"        'Accept': 'application/json'",
+							"    },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({",
+							"            email: email,",
+							"            password: password",
+							"        })",
+							"    }",
+							"}, function (err, res) {",
+							"    if (err) {",
+							"        console.log(\"Login request failed\", err);",
+							"        return;",
+							"    }",
+							"",
+							"    if (res.code !== 200) {",
+							"        console.log(\"Unexpected status code\", res.code);",
+							"        return;",
+							"    }",
+							"",
+							"    try {",
+							"        const json = res.json();",
+							"        const jwt_token = json.token; // Adjust based on your actual response",
+							"        if (jwt_token) {",
+							"            pm.environment.set(\"jwt_token\", jwt_token);",
+							"            console.log(\"Token set successfully.\");",
+							"        } else {",
+							"            console.log(\"Token not found in response.\");",
+							"        }",
+							"    } catch (e) {",
+							"        console.log(\"Error parsing response:\", e);",
+							"    }",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{base_url}}/api/webhooks",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"webhooks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Products",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const baseUrl = pm.environment.get(\"base_url\");",
+							"const email = pm.environment.get(\"email\");",
+							"const password = pm.environment.get(\"password\");",
+							"console.log(baseUrl, email, password);",
+							"pm.sendRequest({",
+							"    url: `${baseUrl}/api/login`,",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Content-Type': 'application/json',",
+							"        'Accept': 'application/json'",
+							"    },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({",
+							"            email: email,",
+							"            password: password",
+							"        })",
+							"    }",
+							"}, function (err, res) {",
+							"    if (err) {",
+							"        console.log(\"Login request failed\", err);",
+							"        return;",
+							"    }",
+							"",
+							"    if (res.code !== 200) {",
+							"        console.log(\"Unexpected status code\", res.code);",
+							"        return;",
+							"    }",
+							"",
+							"    try {",
+							"        const json = res.json();",
+							"        const jwt_token = json.token; // Adjust based on your actual response",
+							"        if (jwt_token) {",
+							"            pm.environment.set(\"jwt_token\", jwt_token);",
+							"            console.log(\"Token set successfully.\");",
+							"        } else {",
+							"            console.log(\"Token not found in response.\");",
+							"        }",
+							"    } catch (e) {",
+							"        console.log(\"Error parsing response:\", e);",
+							"    }",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/products",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Products",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const baseUrl = pm.environment.get(\"base_url\");",
+							"const email = pm.environment.get(\"email\");",
+							"const password = pm.environment.get(\"password\");",
+							"console.log(baseUrl, email, password);",
+							"pm.sendRequest({",
+							"    url: `${baseUrl}/api/login`,",
+							"    method: 'POST',",
+							"    header: {",
+							"        'Content-Type': 'application/json',",
+							"        'Accept': 'application/json'",
+							"    },",
+							"    body: {",
+							"        mode: 'raw',",
+							"        raw: JSON.stringify({",
+							"            email: email,",
+							"            password: password",
+							"        })",
+							"    }",
+							"}, function (err, res) {",
+							"    if (err) {",
+							"        console.log(\"Login request failed\", err);",
+							"        return;",
+							"    }",
+							"",
+							"    if (res.code !== 200) {",
+							"        console.log(\"Unexpected status code\", res.code);",
+							"        return;",
+							"    }",
+							"",
+							"    try {",
+							"        const json = res.json();",
+							"        const jwt_token = json.token; // Adjust based on your actual response",
+							"        if (jwt_token) {",
+							"            pm.environment.set(\"jwt_token\", jwt_token);",
+							"            console.log(\"Token set successfully.\");",
+							"        } else {",
+							"            console.log(\"Token not found in response.\");",
+							"        }",
+							"    } catch (e) {",
+							"        console.log(\"Error parsing response:\", e);",
+							"    }",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{jwt_token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"integration_id\": 2,\n  \"external_product_id\": \"wix_12\",\n  \"name\": \"Iphone 16 pro\",\n  \"sku\": \"Iphone 16 Pro\",\n  \"price\": 1299.99,\n  \"stock\": 5,\n  \"status\": \"active\",\n  \"platform\": \"wix\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/api/products",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"api",
+						"products"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000"
+		},
+		{
+			"key": "jwt_token",
+			"value": ""
+		}
+	]
+}
